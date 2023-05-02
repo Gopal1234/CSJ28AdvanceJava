@@ -2,13 +2,20 @@ package controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.LocalDate;
 
+import javax.persistence.EntityManager;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import model.Student;
+import util.JpaUtil;
 
 /**
  * Servlet implementation class SignUpServlet
@@ -31,7 +38,7 @@ public class SignUpServlet extends HttpServlet {
 	protected void 
 	doGet(HttpServletRequest req, HttpServletResponse res)
 			throws ServletException, IOException {
-		
+	//PrintWriter getWriter()	
 	PrintWriter out=res.getWriter();
 	res.setContentType("text/html");
 	out.println("Welcome to our page");
@@ -49,9 +56,43 @@ public class SignUpServlet extends HttpServlet {
 	{
 		courses=courses + " ,"+s;
 	}
+	String s1=email.substring(1,2);
+	String s2=dob.substring(1,3);
+	String finalPassword=s1+s2;
 	
-	out.print("<h1>"+name + " "+dob+ " "+email+ " "+cityName+ " "+gender+ " "+courses+"</h1>");
 	
+	EntityManager em=JpaUtil.getEntityManager();
+	em.getTransaction().begin();
+	Student student=new Student();
+	student.setName(name);
+	student.setAddress(cityName);
+	student.setDob(LocalDate.parse(dob));
+	student.setEmailId(email);
+	student.setGender(gender);
+	student.setCourses(courses);
+	student.setPassword(finalPassword);
+	em.persist(student);
+	
+	em.getTransaction().commit();
+	
+	
+	
+	
+	
+	/*out.print("<h1>"+name + " "+dob+ " "+email+ " "+cityName+ " "+gender+ " "+courses+"</h1>");
+	//setAttibute(String keyName, Object value)
+	req.setAttribute("user-key", name);
+	req.setAttribute("user-password", finalPassword);*/
+	
+	out.println("<a href='login.jsp'>Login Here</a>");
+	
+	
+	
+	
+	
+	
+	/*RequestDispatcher rd=req.getRequestDispatcher("SecondServlet");
+	rd.forward(req, res);*/
 	
 			
 		
